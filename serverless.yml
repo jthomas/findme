@@ -1,0 +1,40 @@
+service: findme
+
+provider:
+  name: openwhisk
+  runtime: nodejs:8
+
+package:
+  exclude:
+    - 'node_modules/@tensorflow/**'
+    - 'images/**'
+    - 'weights/**'
+
+functions:
+  schedule_search:
+    handler: index.schedule_search
+    name: "findme/schedule_search"
+  twitter_search:
+    handler: index.twitter_search
+    name: "findme/twitter_search"
+    events:
+      - trigger: search_request
+  compare_images:
+    handler: index.compare_images
+    name: "findme/compare_images"
+    image: jamesthomas/action-nodejs-v8:tfjs
+    memory: 512
+    events:
+      - trigger: tweet_image
+
+custom: 
+  credentials: ${file(creds.json)}
+
+resources:
+  packages:
+    findme:
+      parameters:
+        redis: ${self:custom.credentials.redis}
+
+plugins:
+  - serverless-openwhisk

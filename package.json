@@ -1,0 +1,27 @@
+{
+  "name": "findme",
+  "version": "1.0.0",
+  "description": "Search Twitter for untagged photos.",
+  "main": "index.js",
+  "keywords": [
+    "serverless",
+    "openwhisk"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@tensorflow/tfjs-node": "^0.1.12",
+    "openwhisk": "^3.16.0",
+    "serverless-openwhisk": ">=0.13.0"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "face-api.js": "^0.10.1",
+    "file-type": "^9.0.0",
+    "jpeg-js": "^0.3.4",
+    "node-fetch": "^2.2.0",
+    "pngjs": "^3.3.3",
+    "redis": "^2.8.0",
+    "tslib": "^1.9.3",
+    "uuid": "^3.3.2"
+  }
+}

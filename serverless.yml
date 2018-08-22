@@ -22,7 +22,7 @@ functions:
   compare_images:
     handler: index.compare_images
     name: "findme/compare_images"
-    image: jamesthomas/action-nodejs-v8:tfjs
+    image: jamesthomas/action-nodejs-v8:tfjs-faceapi
     memory: 512
     events:
       - trigger: tweet_image

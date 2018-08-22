@@ -1,10 +1,11 @@
 'use strict';
 
-const fetch = require('node-fetch')
 const openwhisk = require('openwhisk');
 const redis = require('./lib/redis.js')
 const twitter = require('./lib/twitter.js')
 const jobs = require('./lib/jobs.js')
+const cache = require('./lib/cache.js')
+const fetch = require('./lib/utils.js').fetch_buffer
 
 const schedule_search = async params => {
   if (!params.redis) throw new Error('Missing redis connection URL from event parameters')
@@ -55,77 +56,48 @@ const twitter_search = async params => {
   return { tweets: results.total, images: results.images.length }
 }
 
-const memoryUsage = () => {
-  let used = process.memoryUsage();
-  const values = []
-  for (let key in used) {
-    values.push(`${key}=${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
-  }
-
-  return `memory used: ${values.join(', ')}`
-}
-   /**
-  console.log(profile_face.length)
-  console.log(profile_face)
-  const uints = new Uint8Array(profile_face.buffer);
-  console.log(Buffer.from(uints).toString('hex'));
-  console.log(uints.length)
-  console.log(uints.buffer.toString('hex'))
-  const floaters = new Float32Array(uints.buffer);
-  console.log(floaters.length)
-  */
-
-
-// NEED MORE LOGS?
-// HOW TO REMOVE TF-JS FROM PACKAGE?
-// NEED TO LOAD MODELS FROM THE FILESYSTEM
 const compare_images = async params => {
   const compare = require('./lib/compare.js')
+  const models = require('./lib/models.js')
+
   if (!params.job) throw new Error('Missing job parameter from event parameters')
   if (!params.tweets) throw new Error('Missing tweets parameter from event parameters')
   if (!params.redis) throw new Error('Missing redis connection URL from event parameters')
 
-
-  //find profile url for user
   const client = redis(params.redis)
   console.log(`retrieving job details: ${params.job}`)
   const job = await jobs.retrieve(client, params.job) 
-  console.log(`found job details:`, job)
-  console.time('profile_image')
-  const profile_image = await twitter.profile_image(job.user) 
-  console.timeEnd('profile_image')
+  console.log(`found job details:`, JSON.stringify(job))
 
-  //const profile = Buffer.from(params.image, 'base64')
-  console.log('looking for faces in profile image.')
-  const profile_faces = await compare.find_faces(profile_image)
-  console.log(`found ${profile_faces.length} faces in profile.`)
-  console.log(memoryUsage())
-  console.time('gc')
-  global.gc();
-  console.timeEnd('gc')
-  console.log(memoryUsage())
-  // what if profile has no face?
-  const profile_face = profile_faces[0].descriptor
-   const match_tweet = async tweet => {
+  // what if job does not exist?
+  const model = await models.load('/nodejsAction/weights')
+  let profile_face = await cache.get(client, job.user)
+
+  if (!profile_face) {
+    const url = await twitter.profile_image(job.user) 
+    const profile_image = await fetch(url)
+
+    console.log('looking for faces in profile image.')
+    const profile_faces = await compare.find_faces(model, profile_image)
+    console.log(`found ${profile_faces.length} faces in profile.`)
+   // what if profile has no face?
+    profile_face = profile_faces[0].descriptor
+    await cache.set(client, job.user, profile_face)
+  }
+
+  const match_tweet = async tweet => {
     const url = tweet.url
     console.log('retrieving new image @', url)
     try {
-      console.time(`fetch ${url}`)
-      const res = await fetch(url)
-      console.timeEnd(`fetch ${url}`)
-      console.time(`buffer ${url}`)
-      const image = await res.buffer()
-      console.timeEnd(`buffer ${url}`)
-      console.time(`find_faces ${url}`)
-      const img_faces = await compare.find_faces(image)
-      console.timeEnd(`find_faces ${url}`)
-      console.log(`finished, found ${img_faces.length} faces in ${url}`)
-      console.log(memoryUsage())
+      const image = await fetch(url)
 
-      console.time(`find matches ${url}`)
-      const matches = img_faces.some(face => compare.face_match(profile_face, face.descriptor))
-      console.timeEnd(`find matches ${url}`)
-      console.log(`${url} matches: ${matches}`)
+      console.log('finding faces in image @', url)
+      const img_faces = await compare.find_faces(model, image)
+
+      console.log(`found ${img_faces.length} faces in ${url}`)
+      const matches = img_faces.some(face => compare.face_match(model, profile_face, face.descriptor))
+
+      console.log(`matching faces found @ ${url}: ${matches}`)
       return { url, matches, id: tweet.id }
     } catch (error) {
       console.error('error caught', error);

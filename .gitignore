@@ -7,3 +7,5 @@ jspm_packages
 
 # Service credentials
 creds.json
+
+.DS_Store

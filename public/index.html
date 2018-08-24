@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>bulma cards</title>
+        <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon.png">
+        <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.css'>
+        <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css'>
+        <script src="script.js"></script>
+    </head>
+    <body>
+        <nav class="navbar has-shadow">
+            <div class="container">
+                <div class="navbar-brand"><a class="navbar-item" href="../"><img src="http://bulma.io/images/bulma-logo.png" alt="Bulma: a modern CSS framework based on Flexbox"/></a>
+                <div class="navbar-burger burger" data-target="navMenu"><span></span><span></span><span></span></div>
+            </div>
+            <div class="navbar-menu" id="navMenu">
+                <div class="navbar-end">
+                    <div class="navbar-item has-dropdown is-hoverable"><a class="navbar-link">Account</a>
+                    <div class="navbar-dropdown"><a class="navbar-item">Dashboard</a><a class="navbar-item">Profile</a><a class="navbar-item">Settings</a>
+                    <hr class="navbar-divider" />
+                    <div class="navbar-item">Logout</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</nav>
+<section class="hero is-info">
+<div class="hero-body">
+    <div class="container">
+        <div class="card">
+            <div class="card-content">
+                <div class="content">
+                    <div class="field has-addons">
+                        <div class="control is-expanded has-icons-left has-icons-right">
+                            <input id="search" class="input is-large search" type="search" placeholder="Search Twitter" />
+                            <span class="icon is-medium is-left">
+                                <i class="fa fa-search"></i>                                
+                            </span>                                        
+                        </div>
+                        <div class="control">
+                            <a class="button is-info is-large" onclick="twitter_search()">Search</a>
+                        </div>
+                    </div>                                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+<div class="box cta">
+<div class="columns is-mobile is-size-5">    
+        <div class="column" style="text-align: center">
+                <div class="results available" style="display: none">
+                    <span style="margin-right: 40px">🔍
+                        <span style="padding-left: 10px" class="is-italic" >Search results:</span>
+                        <span style="padding-left: 5px" class="has-text-weight-semibold" ><span class="tweets">0</span> tweets (<span class="tweet-images">0</span> images)</span>                        
+                    </span>
+                    
+                    <span style="margin-right: 40px">📷 
+                            <span style="padding-left: 10px" class="is-italic" >Processing images...</span>
+                            <span style="padding-left: 5px" class="has-text-weight-semibold" >(<span class="processed-images">0</span> out of <span class="tweet-images">0</span>)</span>                        
+                        </span>
+                    <span class="has-text-weight-semibold">🖼 <span style="padding-left: 8px" >Found</span> <span class="matching-images">0</span> pictures of you!</span>                        
+                </div>   
+                <div class="results waiting" style="display: none">
+                    <span>
+                        ⏳ 
+                        <span style="padding-left: 10px" class="is-italic" >Waiting for search results...</span>
+                    </span>
+                </div>
+        </div>
+    
+</div>
+</div>
+<section id="tweet_container" class="container">        
+</section>
+<footer>
+<div class="box cta">
+    <div class="columns is-mobile is-centered">
+        <div class="field is-grouped is-grouped-multiline">
+            <div class="control">
+                <div class="tags has-addons"><a class="tag is-link" href="https://github.com/dansup/bulma-templates">Bulma Templates</a><span class="tag is-light">Daniel Supernault</span></div>
+            </div>
+            <div class="control">
+                <div class="tags has-addons"><a class="tag is-link">The source code is licensed</a><span class="tag is-light">MIT  <i class="fa fa-github"></i></span></div>
+            </div>
+        </div>
+    </div>
+</div>
+</footer>
+</body>
+<script>window.twttr = (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0],
+          t = window.twttr || {};
+        if (d.getElementById(id)) return t;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "https://platform.twitter.com/widgets.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      
+        t._e = [];
+        t.ready = function(f) {
+          t._e.push(f);
+        };
+      
+        return t;
+      }(document, "script", "twitter-wjs"));</script>
+</html>

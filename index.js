@@ -7,8 +7,40 @@ const jobs = require('./lib/jobs.js')
 const cache = require('./lib/cache.js')
 const fetch = require('./lib/utils.js').fetch_buffer
 
+const search_status = async params => {
+  try {
+
+    if (!params.redis) throw new Error('Missing redis connection URL from event parameters')
+    console.log('invoked with params', params)
+
+    const id = params.__ow_path.split('/').pop()
+    const client = redis(params.redis)
+    // what if job does not exist?
+    const job = await jobs.retrieve(client, id)
+    const result = { status: 'searching' }
+
+    if (job.results !== "-1") {
+      result.status = (job.images !== job.processed) ? 'processing' : 'finished'
+
+      result.total = parseInt(job.results, 10)
+      result.images = parseInt(job.images, 10)
+      result.processed = parseInt(job.processed, 10)
+      result.matches = (await jobs.retrieve_matches(client, id)).map(match => match.split(" ")[0])
+    }
+
+    return { body: result }
+  } catch (err) {
+    console.error(err)
+    return { error: err.message }
+  }
+
+}
+
 const schedule_search = async params => {
   if (!params.redis) throw new Error('Missing redis connection URL from event parameters')
+  if (!params.query) throw new Error('Missing query parameter from event parameters')
+  if (!params.user) throw new Error('Missing user parameter from event parameters')
+  console.log('invoked with params', params)
 
   const client = redis(params.redis)
   const job_id = await jobs.create(client, params.query, params.user)
@@ -114,3 +146,4 @@ const compare_images = async params => {
 exports.twitter_search = twitter_search
 exports.compare_images = compare_images
 exports.schedule_search = schedule_search
+exports.search_status = search_status

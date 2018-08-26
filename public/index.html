@@ -34,7 +34,7 @@
                 <div class="content">
                     <div class="field has-addons">
                         <div class="control is-expanded has-icons-left has-icons-right">
-                            <input id="search" class="input is-large search" type="search" placeholder="Search Twitter" />
+                            <input id="search" class="input is-large search" type="search" placeholder="Search Twitter" onkeypress="keypress(event)"/>
                             <span class="icon is-medium is-left">
                                 <i class="fa fa-search"></i>                                
                             </span>                                        
@@ -106,5 +106,5 @@
         };
       
         return t;
-      }(document, "script", "twitter-wjs"));</script>
+        }(document, "script", "twitter-wjs"));</script>
 </html>

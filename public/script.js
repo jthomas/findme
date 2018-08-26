@@ -1,8 +1,15 @@
+const keypress = e => {
+  if(e.keyCode === 13){
+    twitter_search()
+   }
+}
+
 const twitter_search = async () => {
     const query = document.getElementById("search").value
     document.querySelector('#search').disabled = true
     document.querySelector('.button').setAttribute('disabled', true)
     document.querySelector('.button').classList.add('is-loading')
+    document.getElementById('tweet_container').innerHTML = ''
     console.log("search twitter", query)
 
     document.querySelectorAll(".results.waiting").forEach((el) => el.setAttribute('style', ''))
@@ -14,7 +21,8 @@ const twitter_search = async () => {
     
     update_page_results()
     let status = {}
-
+    
+    const tweets = new Set()
     while(status.status !== 'finished') {        
         status = await search_status(result.job_id)
         console.log(status)
@@ -26,7 +34,10 @@ const twitter_search = async () => {
         update_page_results(status.total, status.images, status.processed, matches)
 
         if (matches) {
-            status.matches.forEach(add_tweet)
+          status.matches.filter(m => !tweets.has(m)).forEach(m => {
+            add_tweet(m)
+            tweets.add(m)
+          })
         }
         await delay(500)
     }
@@ -58,27 +69,24 @@ const delay = ms => {
 }
 
 const search = async (query, user) => {
-    const result = {
-        job_id: "518b49c0-a61f-11e8-98a2-819e5f7c9b23"
-    }
-    return new Promise((resolve, reject) => {
-        setTimeout(() => resolve(result), 1000)
-    })
-    
+  const url = "https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/1310a834667721bb9bf6968e828aa286aa5a287b4e5d46a513aa813a775602fb/findme/api/search"
+  const rawResponse = await fetch(url , {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({query, user})
+  });
+  const content = await rawResponse.json();
+
+  return content
 }
 
-const _results = [
-    { status: "searching"},
-    { status: "processing", total: 129, images: 84, processed: 0},
-    { status: "processing", total: 129, images: 84, processed: 4},
-    { status: "processing", total: 129, images: 84, processed: 29, matches: ["1015219373026545664", "1015571475863146497"]},
-    { status: "processing", total: 129, images: 84, processed: 68, matches: ["1015219373026545664", "1015571475863146497", "1015279371530227712"]},
-    { status: "finished", total: 129, images: 84, processed: 84, matches: ["1015219373026545664", "1015571475863146497", "1015279371530227712", "1015153185072263168"]}
-]
+const search_status = async job_id => {    
+  const url = `https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/1310a834667721bb9bf6968e828aa286aa5a287b4e5d46a513aa813a775602fb/findme/api/search/${job_id}`
+  const rawResponse = await fetch(url)
+  const content = await rawResponse.json();
 
-const search_status = job_id => {    
-    return new Promise((resolve, reject) => {
-        const current_result = _results.splice(0, 1)
-        setTimeout(() => resolve(current_result[0]), Math.random()* 1000)
-    })
+  return content
 }

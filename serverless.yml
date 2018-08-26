@@ -11,9 +11,19 @@ package:
     - 'weights/**'
 
 functions:
+  search_status:
+    handler: index.search_status
+    name: "findme/search_status"
+    events:
+      - http:
+          method: GET
+          path: /api/search/{id}
+          resp: http
   schedule_search:
     handler: index.schedule_search
     name: "findme/schedule_search"
+    events:
+      - http: POST /api/search
   twitter_search:
     handler: index.twitter_search
     name: "findme/twitter_search"

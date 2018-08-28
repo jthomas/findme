@@ -7,6 +7,27 @@ const jobs = require('./lib/jobs.js')
 const cache = require('./lib/cache.js')
 const fetch = require('./lib/utils.js').fetch_buffer
 
+const find_twitter_name = async params => {
+  try {
+  if (!params.auth0) throw new Error('Missing auth0 access token from event parameters')
+  if (!params.user_id) throw new Error('Missing user token from event parameters')
+
+  const fetch = require('node-fetch')
+  const url = `https://find-me-twitter.eu.auth0.com/api/v2/users/${params.user_id}`
+  const res = await fetch(url, {
+    headers: {
+      'Authorization': `Bearer ${params.auth0}`,
+    }
+  })
+  const result = await res.json()
+
+  return { screen_name: result.screen_name }
+  } catch (err) {
+    console.error(err)
+    return { error: err.message }
+  }
+}
+
 const search_status = async params => {
   try {
 
@@ -147,3 +168,4 @@ exports.twitter_search = twitter_search
 exports.compare_images = compare_images
 exports.schedule_search = schedule_search
 exports.search_status = search_status
+exports.find_twitter_name = find_twitter_name

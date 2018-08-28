@@ -2,33 +2,48 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>bulma cards</title>
+        <title>find me on twitter</title>
         <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon.png">
         <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.css'>
         <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css'>
+        <script src="https://cdn.auth0.com/js/lock/11.8/lock.min.js"></script>
         <script src="script.js"></script>
     </head>
-    <body>
+    <body style='background-image: url("background.jpg");'>
         <nav class="navbar has-shadow">
             <div class="container">
-                <div class="navbar-brand"><a class="navbar-item" href="../"><img src="http://bulma.io/images/bulma-logo.png" alt="Bulma: a modern CSS framework based on Flexbox"/></a>
-                <div class="navbar-burger burger" data-target="navMenu"><span></span><span></span><span></span></div>
+                <div class="navbar-brand has-text-weight-bold is-size-3"><a style="padding-top: 0; padding-bottom: 0" class="navbar-item" href="#">🕵️‍♂️ FIND ME 🕵️‍♀️</a>  
             </div>
-            <div class="navbar-menu" id="navMenu">
-                <div class="navbar-end">
-                    <div class="navbar-item has-dropdown is-hoverable"><a class="navbar-link">Account</a>
-                    <div class="navbar-dropdown"><a class="navbar-item">Dashboard</a><a class="navbar-item">Profile</a><a class="navbar-item">Settings</a>
-                    <hr class="navbar-divider" />
-                    <div class="navbar-item">Logout</div>
+            <div class="navbar-end">
+                <div class="navbar-item">
+                  <div class="field is-grouped">                    
+                    <p class="control login">
+                      <a class="button is-primary" href="#" onclick="login()">
+                        <span class="icon">
+                          <i class="fa fa-sign-in"></i>
+                        </span>
+                        <span>Sign In</span>
+                      </a>
+                    </p>
+                    <p class="control logout">
+                        <a class="button is-primary" href="#" onclick="logout()">
+                          <span class="icon">
+                            <i class="fa fa-sign-out"></i>
+                          </span>
+                          <span>Sign Out</span>
+                        </a>
+                      </p>
+                  </div>
                 </div>
-            </div>
+              </div>
+            
         </div>
     </div>
 </div>
 </nav>
 <section class="hero is-info">
 <div class="hero-body">
-    <div class="container">
+    <div class="container search">
         <div class="card">
             <div class="card-content">
                 <div class="content">
@@ -49,7 +64,7 @@
     </div>
 </div>
 </section>
-<div class="box cta">
+<div class="box cta is-radiusless">
 <div class="columns is-mobile is-size-5">    
         <div class="column" style="text-align: center">
                 <div class="results available" style="display: none">
@@ -74,22 +89,9 @@
     
 </div>
 </div>
-<section id="tweet_container" class="container">        
+<section id="tweet_container" class="container" style="min-height: 800px">        
 </section>
-<footer>
-<div class="box cta">
-    <div class="columns is-mobile is-centered">
-        <div class="field is-grouped is-grouped-multiline">
-            <div class="control">
-                <div class="tags has-addons"><a class="tag is-link" href="https://github.com/dansup/bulma-templates">Bulma Templates</a><span class="tag is-light">Daniel Supernault</span></div>
-            </div>
-            <div class="control">
-                <div class="tags has-addons"><a class="tag is-link">The source code is licensed</a><span class="tag is-light">MIT  <i class="fa fa-github"></i></span></div>
-            </div>
-        </div>
-    </div>
-</div>
-</footer>
+
 </body>
 <script>window.twttr = (function(d, s, id) {
         var js, fjs = d.getElementsByTagName(s)[0],

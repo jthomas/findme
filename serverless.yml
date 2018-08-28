@@ -7,10 +7,14 @@ provider:
 package:
   exclude:
     - 'node_modules/@tensorflow/**'
-    - 'images/**'
     - 'weights/**'
 
 functions:
+  find_twitter_name:
+    handler: index.find_twitter_name
+    name: "findme/find_twitter_name"
+    events:
+      - http: GET /api/users/screen_name
   search_status:
     handler: index.search_status
     name: "findme/search_status"
@@ -45,6 +49,7 @@ resources:
     findme:
       parameters:
         redis: ${self:custom.credentials.redis}
+        auth0: ${self:custom.credentials.auth0}
 
 plugins:
   - serverless-openwhisk

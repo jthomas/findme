@@ -6,13 +6,14 @@
         <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon.png">
         <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.css'>
         <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css'>
+        <link rel='stylesheet prefetch' href='style.css'>
         <script src="https://cdn.auth0.com/js/lock/11.8/lock.min.js"></script>
         <script src="script.js"></script>
     </head>
-    <body style='background-image: url("background.jpg");'>
+    <body>
         <nav class="navbar has-shadow">
             <div class="container">
-                <div class="navbar-brand has-text-weight-bold is-size-3"><a style="padding-top: 0; padding-bottom: 0" class="navbar-item" href="#">🕵️‍♂️ FIND ME 🕵️‍♀️</a>  
+                <div class="navbar-brand has-text-weight-bold is-size-3"><a class="navbar-item" href="#">🕵️‍♂️ FIND ME 🕵️‍♀️</a>  
             </div>
             <div class="navbar-end">
                 <div class="navbar-item">
@@ -49,7 +50,7 @@
                 <div class="content">
                     <div class="field has-addons">
                         <div class="control is-expanded has-icons-left has-icons-right">
-                            <input id="search" class="input is-large search" type="search" placeholder="Search Twitter" onkeypress="keypress(event)"/>
+                            <input id="search" class="input is-large search" type="search" placeholder="Search Twitter" onkeyup="keyup(event)"/>
                             <span class="icon is-medium is-left">
                                 <i class="fa fa-search"></i>                                
                             </span>                                        
@@ -66,30 +67,30 @@
 </section>
 <div class="box cta is-radiusless">
 <div class="columns is-mobile is-size-5">    
-        <div class="column" style="text-align: center">
-                <div class="results available" style="display: none">
-                    <span style="margin-right: 40px">🔍
-                        <span style="padding-left: 10px" class="is-italic" >Search results:</span>
-                        <span style="padding-left: 5px" class="has-text-weight-semibold" ><span class="tweets">0</span> tweets (<span class="tweet-images">0</span> images)</span>                        
+        <div class="column">
+                <div class="results available hidden">
+                    <span class="margin">🔍
+                        <span class="is-italic" >Search results:</span>
+                        <span class="has-text-weight-semibold" ><span class="tweets">0</span> tweets (<span class="tweet-images">0</span> images)</span>                        
                     </span>
                     
-                    <span style="margin-right: 40px">📷 
-                            <span style="padding-left: 10px" class="is-italic" >Processing images...</span>
-                            <span style="padding-left: 5px" class="has-text-weight-semibold" >(<span class="processed-images">0</span> out of <span class="tweet-images">0</span>)</span>                        
+                    <span class="margin">📷 
+                            <span class="is-italic" >Processing images...</span>
+                            <span class="has-text-weight-semibold" >(<span class="processed-images">0</span> out of <span class="tweet-images">0</span>)</span>                        
                         </span>
-                    <span class="has-text-weight-semibold">🖼 <span style="padding-left: 8px" >Found</span> <span class="matching-images">0</span> pictures of you!</span>                        
+                    <span class="has-text-weight-semibold">🖼 <span>Found</span> <span class="matching-images">0</span> pictures of you!</span>                        
                 </div>   
-                <div class="results waiting" style="display: none">
+                <div class="results waiting hidden">
                     <span>
                         ⏳ 
-                        <span style="padding-left: 10px" class="is-italic" >Waiting for search results...</span>
+                        <span class="is-italic" >Waiting for search results...</span>
                     </span>
                 </div>
         </div>
     
 </div>
 </div>
-<section id="tweet_container" class="container" style="min-height: 800px">        
+<section id="tweet_container" class="container">        
 </section>
 
 </body>

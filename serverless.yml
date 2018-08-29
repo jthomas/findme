@@ -11,35 +11,45 @@ package:
 
 functions:
   find_twitter_name:
-    handler: index.find_twitter_name
+    handler: find_twitter_name.main
     name: "findme/find_twitter_name"
     events:
       - http: GET /api/users/screen_name
+    annotations:
+      final: true
   search_status:
-    handler: index.search_status
+    handler: search_status.main
     name: "findme/search_status"
     events:
       - http:
           method: GET
           path: /api/search/{id}
           resp: http
+    annotations:
+      final: true
   schedule_search:
-    handler: index.schedule_search
+    handler: schedule_search.main
     name: "findme/schedule_search"
     events:
       - http: POST /api/search
+    annotations:
+      final: true
   twitter_search:
-    handler: index.twitter_search
+    handler: twitter_search.main
     name: "findme/twitter_search"
     events:
       - trigger: search_request
+    annotations:
+      final: true
   compare_images:
-    handler: index.compare_images
+    handler: compare_images.main
     name: "findme/compare_images"
     image: jamesthomas/action-nodejs-v8:tfjs-faceapi
     memory: 512
     events:
       - trigger: tweet_image
+    annotations:
+      final: true
 
 custom: 
   credentials: ${file(creds.json)}

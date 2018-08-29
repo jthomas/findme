@@ -1,0 +1,37 @@
+body {
+    background-image: url("background.jpg")
+}
+
+#tweet_container {
+    min-height: 800px
+}
+
+.navbar-brand .navbar-item {
+    padding-top: 0;
+    padding-bottom: 0
+}
+
+.column {
+    text-align: center
+}
+
+.hidden {
+    display: none
+}
+
+.results .margin {
+    margin-right: 40px
+}
+
+.results > span > span:first-child {
+    padding-left: 10px
+}
+
+.results > .margin > span:last-child {
+    padding-left: 5px
+}
+
+.tweet {
+    vertical-align: top;
+    padding-right: 75px
+}

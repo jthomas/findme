@@ -10,3 +10,4 @@ creds.json
 
 .DS_Store
 weights/
+test.js

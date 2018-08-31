@@ -14,6 +14,7 @@
     "serverless-openwhisk": ">=0.13.0"
   },
   "dependencies": {
+    "auth0": "^2.12.0",
     "cheerio": "^1.0.0-rc.2",
     "face-api.js": "^0.10.1",
     "file-type": "^9.0.0",

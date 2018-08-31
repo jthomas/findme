@@ -4,8 +4,7 @@ const lock = new Auth0Lock(
   'find-me-twitter.eu.auth0.com'
 );
 
-// ...when user authenticates, use user profile id to retrieve twitter screen name.
-// store this in localStorage as login identifier
+// ...when user authenticates, save profile id in localStorage as login identifier
 lock.on("authenticated", (authResult) => {
   console.log('authenticated', authResult)
   lock.getUserInfo(authResult.accessToken, async (error, profile) => {
@@ -15,34 +14,35 @@ lock.on("authenticated", (authResult) => {
     }
     
     const user_id = profile.sub
-    const screen_name = await twitter_screen_name(user_id)
-    console.log('found screen name', screen_name)
-    localStorage.setItem('twitter_user_id',screen_name);
+    localStorage.setItem('twitter_user_id', user_id);
+    console.log('found twitter id', user_id)
     login_btns()
     lock.hide()
   });
 });
 
 // check whether user has previously logged in
-const is_logged_in = () => !(localStorage.getItem('twitter_user_id') === null)
+const is_logged_in = () => {
+  return localStorage.getItem('twitter_user_id') !== null 
+}
 
-// return twitter identifier from localStorage.
+// access key in localstorage
 // if this is not available, return promise which resolves when it is.
-const get_twitter_user_id = async () => {
-  const twitter_user_id = localStorage.getItem('twitter_user_id')
+const async_retrieve = async key => {
+  const value = localStorage.getItem(key)
   
-  if (twitter_user_id !== null) {
-    console.log('twitter user id restored from localStorage:', twitter_user_id)
-    return Promise.resolve(twitter_user_id)
+  if (value !== null) {
+    console.log(key, 'restored from localStorage:', value)
+    return Promise.resolve(value)
   }
 
-  console.log('twitter user id not available, waiting for localStorage update...')
+  console.log(key, 'not available, waiting for localStorage update...')
 
   return new Promise((resolve, reject) => {
     const el = e => {
-      if (e.key !== 'twitter_user_id') return
+      if (e.key !== key) return
       window.removeEventListener('storage', el)
-      console.log('twitter user id now available:', e.newValue)
+      console.log(key, 'now available:', e.newValue)
       resolve(e.newValue)
     }
     window.addEventListener('storage', el)
@@ -97,7 +97,7 @@ const twitter_search = async () => {
   }
 
   // this value resolves once user login has finished
-  const screen_name = await get_twitter_user_id()
+  const id = await async_retrieve('twitter_user_id')
   const query = search_query()
   console.log("search twitter for", query)
 
@@ -105,7 +105,7 @@ const twitter_search = async () => {
   reset_search_results()
 
   // fire new search request, responds with job identifier to check status
-  const result = await search(query, screen_name)
+  const result = await search(query, id)
   console.log("search response", result.job_id)
   
   update_page_results()
@@ -225,15 +225,6 @@ const search_status = async job_id => {
   const content = await rawResponse.json();
 
   return content
-}
-
-// Return twitter screen name from user identifier
-const twitter_screen_name = async user_id => {    
-  const url = `https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/1310a834667721bb9bf6968e828aa286aa5a287b4e5d46a513aa813a775602fb/findme/api/users/screen_name?user_id=${user_id}`
-  const rawResponse = await fetch(url)
-  const content = await rawResponse.json();
-
-  return content.screen_name
 }
 
 const delay = ms => {

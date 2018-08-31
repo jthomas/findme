@@ -10,13 +10,6 @@ package:
     - 'weights/**'
 
 functions:
-  find_twitter_name:
-    handler: find_twitter_name.main
-    name: "findme/find_twitter_name"
-    events:
-      - http: GET /api/users/screen_name
-    annotations:
-      final: true
   search_status:
     handler: search_status.main
     name: "findme/search_status"
@@ -60,6 +53,7 @@ resources:
       parameters:
         redis: ${self:custom.credentials.redis}
         auth0: ${self:custom.credentials.auth0}
+        twitter_client: ${self:custom.credentials.twitter}
 
 plugins:
   - serverless-openwhisk

@@ -2,7 +2,7 @@
 
 const utils = require('./lib/utils.js')
 const redis = require('./lib/redis.js')
-const twitter = require('./lib/twitter.js')
+const twitter = require('./lib/twitter/webclient.js')
 const jobs = require('./lib/jobs.js')
 const cache = require('./lib/cache.js')
 const fetch = require('./lib/utils.js').fetch_buffer

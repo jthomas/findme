@@ -92,7 +92,19 @@
 </div>
 <section id="tweet_container" class="container">        
 </section>
-
+  <div id="modal" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <article class="message is-danger">
+            <div class="message-header">
+              <p>Oh noes, we did an error... 🙈</p>
+              <button onclick="hide_error();"class="delete" aria-label="delete"></button>
+            </div>
+            <div class="message-body">              
+            </div>
+          </article>
+    </div>
+  </div>
 </body>
 <script>window.twttr = (function(d, s, id) {
         var js, fjs = d.getElementsByTagName(s)[0],

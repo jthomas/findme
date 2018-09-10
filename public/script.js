@@ -10,6 +10,7 @@ lock.on("authenticated", (authResult) => {
   lock.getUserInfo(authResult.accessToken, async (error, profile) => {
     if (error) {
       console.log('error with getUserInfo', error)
+      show_error('Failed to retrieve user profile from auth0. 🤷‍♀️🤷‍♂️')
       return;
     }
     
@@ -19,6 +20,16 @@ lock.on("authenticated", (authResult) => {
     login_btns()
     lock.hide()
   });
+});
+
+lock.on("unrecoverable_error", err => {
+  console.log('unrecoverable_error', err)
+  lock.hide()
+  show_error(`Auth0 returned an 'unrecoverable_error' code. This is bad. Time to reboot your computer?!`)
+});
+
+lock.on("authorization_error", err => {
+  console.log('authorization_error', err)
 });
 
 // check whether user has previously logged in
@@ -96,29 +107,30 @@ const twitter_search = async () => {
     login()
   }
 
-  // this value resolves once user login has finished
-  const id = await async_retrieve('twitter_user_id')
-  const query = search_query()
-  console.log("search twitter for", query)
+  try {
+    // this value resolves once user login has finished
+    const id = await async_retrieve('twitter_user_id')
+    const query = search_query()
+    console.log("search twitter for", query)
 
-  disable_search_controls()
-  reset_search_results()
+    disable_search_controls()
+    reset_search_results()
 
-  // fire new search request, responds with job identifier to check status
-  const result = await search(query, id)
-  console.log("search response", result.job_id)
-  
-  update_page_results()
-  let status = {}
-    
-  const tweets = new Set()
-  // poll for status updates until search is finished
-  while(status.status !== 'finished') {        
-      status = await search_status(result.job_id)
+    // fire new search request, responds with job identifier to check status
+    const result = await search(query, id)
+    console.log("search response", result.job_id)
+
+    update_page_results()
+    let status = {}
+
+    const tweets = new Set()
+    // poll for status updates until search is finished
+    while (status.status !== 'finished') {
+      status = await search_status(result.job_id)      
       console.log(status)
-      if (status.status !== 'searching') {            
-          hide_elements(".results.waiting")
-          hide_elements(".results.available", false)
+      if (status.status !== 'searching') {
+        hide_elements(".results.waiting")
+        hide_elements(".results.available", false)
       }
       const matches = (status.matches || []).length
       update_page_results(status.total, status.images, status.processed, matches)
@@ -130,6 +142,9 @@ const twitter_search = async () => {
         })
       }
       await delay(500)
+    }
+  } catch (err) {
+    show_error(err.message)
   }
 
   disable_search_controls(false)    
@@ -200,6 +215,12 @@ const disable_control = (el, disable = true) => {
 // Page utilities, check search query field
 const search_query = () => document.getElementById("search").value.trim()
 const has_search_query = () => search_query().length > 0
+const hide_error = () => document.getElementById("modal").classList.remove("is-active")
+const show_error = message => {  
+  document.querySelector("#modal .message-body").innerText = message
+  document.getElementById("modal").classList.add("is-active")
+}
+
 
 // Functions which expose backend API methods.
 // Fire new search request, returns job id to monitor status.
@@ -213,6 +234,11 @@ const search = async (query, user) => {
     },
     body: JSON.stringify({query, user})
   });
+
+  if (!rawResponse.ok) {
+    throw new Error("Search service returned non-200 HTTP response! Unable to create new search request. Try again?")
+  }
+
   const content = await rawResponse.json();
 
   return content
@@ -222,6 +248,11 @@ const search = async (query, user) => {
 const search_status = async job_id => {    
   const url = `https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/1310a834667721bb9bf6968e828aa286aa5a287b4e5d46a513aa813a775602fb/findme/api/search/${job_id}`
   const rawResponse = await fetch(url)
+
+  if (!rawResponse.ok) {
+    throw new Error(`Search status service returned non-200 HTTP response! Unable to check status for search request (${job_id}). Try again?`)
+  }
+
   const content = await rawResponse.json();
 
   return content

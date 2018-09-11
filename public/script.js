@@ -1,8 +1,14 @@
+// Application configuration. Replace values with your parameters...
+const CONFIG = {
+  auth0: {
+    clientId: 'PQQ4fJHdMM6FzxG7yoO1JkC65T6d0XO9',
+    domain: 'find-me-twitter.eu.auth0.com'
+  },
+  backend: 'https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/1310a834667721bb9bf6968e828aa286aa5a287b4e5d46a513aa813a775602fb/findme'
+}
+
 // Authentication integration with Auth0
-const lock = new Auth0Lock(
-  'PQQ4fJHdMM6FzxG7yoO1JkC65T6d0XO9',
-  'find-me-twitter.eu.auth0.com'
-);
+const lock = new Auth0Lock(CONFIG.auth0.clientId, CONFIG.auth0.domain)
 
 // ...when user authenticates, save profile id in localStorage as login identifier
 lock.on("authenticated", (authResult) => {
@@ -124,8 +130,11 @@ const twitter_search = async () => {
     let status = {}
 
     const tweets = new Set()
+    
+    // poll for five minutes at most, don't want to continue for ever.
+    const should_poll = poll_check(5 * 60)
     // poll for status updates until search is finished
-    while (status.status !== 'finished') {
+    while (should_poll(status.status)) {
       status = await search_status(result.job_id)      
       console.log(status)
       if (status.status !== 'searching') {
@@ -148,6 +157,16 @@ const twitter_search = async () => {
   }
 
   disable_search_controls(false)    
+}
+
+const poll_check = max_seconds => {
+  const start = Date.now()
+  const max_milliseconds = max_seconds * 1000
+
+  return status => {
+    const elapsed = Date.now() - start
+    return elapsed < max_milliseconds && status !== 'finished'
+  }
 }
 
 // Page modification functions
@@ -225,7 +244,7 @@ const show_error = message => {
 // Functions which expose backend API methods.
 // Fire new search request, returns job id to monitor status.
 const search = async (query, user) => {
-  const url = "https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/1310a834667721bb9bf6968e828aa286aa5a287b4e5d46a513aa813a775602fb/findme/api/search"
+  const url = `${CONFIG.backend}/api/search`
   const rawResponse = await fetch(url , {
     method: 'POST',
     headers: {
@@ -246,7 +265,7 @@ const search = async (query, user) => {
 
 // Return current status of search request
 const search_status = async job_id => {    
-  const url = `https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/1310a834667721bb9bf6968e828aa286aa5a287b4e5d46a513aa813a775602fb/findme/api/search/${job_id}`
+  const url = `${CONFIG.backend}/api/search/${job_id}`
   const rawResponse = await fetch(url)
 
   if (!rawResponse.ok) {

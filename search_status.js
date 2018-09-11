@@ -8,7 +8,6 @@ const main = async params => {
 
   const id = params.__ow_path.split('/').pop()
   const client = redis(params.redis)
-  // what if job does not exist?
   const job = await jobs.retrieve(client, id)
   const result = { status: 'searching' }
 

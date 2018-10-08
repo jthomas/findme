@@ -30,7 +30,11 @@ const main = async params => {
     console.log('looking for faces in profile image.')
     const profile_faces = await compare.find_faces(model, profile_image)
     console.log(`found ${profile_faces.length} faces in profile.`)
-   // what if profile has no face?
+
+    if (!profile_faces.length) {
+      throw new Error(`Unable to find face in twitter profile ${job.user} for comparison.`)
+    }
+
     profile_face = profile_faces[0].descriptor
     await cache.set(client, job.user, profile_face)
   }

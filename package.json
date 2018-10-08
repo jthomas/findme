@@ -1,12 +1,17 @@
 {
   "name": "findme",
   "version": "1.0.0",
-  "description": "Search Twitter for untagged photos.",
+  "description": "Serverless application to find unlabelled photos of a user on twitter.",
   "main": "index.js",
   "keywords": [
     "serverless",
     "openwhisk"
   ],
+  "author": "James Thomas <james@jamesthom.as>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jthomas/findme.git"
+  },
   "license": "MIT",
   "devDependencies": {
     "@tensorflow/tfjs-node": "^0.1.12",

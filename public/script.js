@@ -1,10 +1,10 @@
 // Application configuration. Replace values with your parameters...
 const CONFIG = {
   auth0: {
-    clientId: 'PQQ4fJHdMM6FzxG7yoO1JkC65T6d0XO9',
-    domain: 'find-me-twitter.eu.auth0.com'
+    clientId: '<CLIENT_ID>',
+    domain: '<USER_ID>.auth0.com'
   },
-  backend: 'https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/1310a834667721bb9bf6968e828aa286aa5a287b4e5d46a513aa813a775602fb/findme'
+  backend: 'https://<APIGW_URL>/findme'
 }
 
 // Authentication integration with Auth0

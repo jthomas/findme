@@ -19,24 +19,23 @@ const main = async params => {
   const job = await jobs.retrieve(client, params.job) 
   console.log(`found job details:`, JSON.stringify(job))
 
-  // what if job does not exist?
-  const model = await models.load('/nodejsAction/weights')
-  let profile_face = await cache.get(client, job.user)
+  const weights_directory = params.weights_directory || '/nodejsAction/weights'
+  const model = await models.load(weights_directory)
+  let profile_face_descriptor = await cache.get(client, job.user)
 
-  if (!profile_face) {
+  if (!profile_face_descriptor) {
     const url = await twitter.profile_image(job.user) 
     const profile_image = await fetch(url)
 
     console.log('looking for faces in profile image.')
-    const profile_faces = await compare.find_faces(model, profile_image)
-    console.log(`found ${profile_faces.length} faces in profile.`)
+    const profile_face = await compare.find_face(model, profile_image)
 
-    if (!profile_faces.length) {
+    if (!profile_face) {
       throw new Error(`Unable to find face in twitter profile ${job.user} for comparison.`)
     }
 
-    profile_face = profile_faces[0].descriptor
-    await cache.set(client, job.user, profile_face)
+    profile_face_descriptor = profile_face.descriptor
+    await cache.set(client, job.user, profile_face_descriptor)
   }
 
   const match_tweet = async tweet => {
@@ -49,8 +48,8 @@ const main = async params => {
       const img_faces = await compare.find_faces(model, image)
 
       console.log(`found ${img_faces.length} faces in ${url}`)
-      const matches = img_faces.some(face => compare.face_match(model, profile_face, face.descriptor))
 
+      const matches = compare.face_match(model, profile_face_descriptor, img_faces)
       console.log(`matching faces found @ ${url}: ${matches}`)
       return { url, matches, id: tweet.id }
     } catch (error) {

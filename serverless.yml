@@ -2,11 +2,10 @@ service: findme
 
 provider:
   name: openwhisk
-  runtime: nodejs:8
+  runtime: nodejs:10
 
 package:
   exclude:
-    - 'node_modules/@tensorflow/**'
     - 'weights/**'
 
 functions:
@@ -37,7 +36,7 @@ functions:
   compare_images:
     handler: compare_images.main
     name: "findme/compare_images"
-    image: jamesthomas/action-nodejs-v8:tfjs-faceapi
+    image: jamesthomas/action-nodejs-v10:tfjs-faceapi
     memory: 512
     events:
       - trigger: tweet_image
